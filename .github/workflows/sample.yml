@@ -1,0 +1,33 @@
+#this is the CI yaml file for the project which is based on the node.js
+name: CI
+
+on: push
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.3.0
+
+      #setting up the node.js environmentfor the project
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3.6.0
+        with:
+          node-version: ${{env.NODE_VERSION}}
+
+      #giving the commands for the npm to install all the dependencies
+      - name: Install NPM dependencies
+        run: ${{secrets.DEPENDENCY_COMMANDS}}
+
+      #giving the commands for the npm to run the test
+      - name: run the test
+        run: ${{secrets.RUN_TEST_COMMANDS}}
+
+      #uploading the files or the directory to the github server for which it can be used in other workflows for further usage
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v3.1.2
+        with:
+          #specify the name of the folder in which the artifact is uploaded
+          name: ${{secrets.DESTINATION_FOLDER_NAME}}
+          #specify the path from where that the artifact has to be upload to the github server.
+          path: ${{secrets.ARTIFACT_SOURCE_PATH}}
